@@ -1,0 +1,71 @@
+# -
+关于超声波测距仪的代码
+
+#include<math.h> //包括数学公式头文件
+const int echopin=5; // echo接5端口
+const int trigpin=4; // trig接4端口  上侧超声波测距器
+
+
+const int echopin2=3;
+const int trigpin2=2;// 下侧超声波测距器
+
+
+const int echopin3=6;
+const int trigpin3=7;// 水平超声波测距器
+
+void setup()
+{
+  Serial.begin(9600);  
+  pinMode(echopin,INPUT); //设定echo为输入模式
+  pinMode(trigpin,OUTPUT);//设定trig为输出模式
+  pinMode(echopin2,INPUT);
+  pinMode(trigpin2,OUTPUT);
+  pinMode(echopin3,INPUT);
+  pinMode(trigpin3,OUTPUT);
+
+  
+}
+
+void loop()
+{
+  // *********************************** 上方测距******/
+   digitalWrite(trigpin,LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin,HIGH);
+delayMicroseconds(10);
+digitalWrite(trigpin,LOW); //发一个10ms的高脉冲去触发TrigPin
+float distanceL = pulseIn(echopin,HIGH);//接收高电平时间
+  distanceL = distanceL/58.0;//计算距离
+  distanceL = distanceL+9;
+
+
+/*******************下方测距******************************************/
+
+  digitalWrite(trigpin2,LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin2,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigpin2,LOW); //发一个10ms的高脉冲去触发TrigPin
+  float distanceR = pulseIn(echopin2,HIGH);//接收高电平时间
+  distanceR = distanceR/58.0;//计算距离
+  distanceR = distanceR+9;
+// *******************水平测距********************************************/
+
+  digitalWrite(trigpin3,LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin3,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigpin3,LOW); //发一个10ms的高脉冲去触发TrigPin 
+  float distanceF = pulseIn(echopin3,HIGH);//接收高电平时间
+  distanceF = distanceF/58.0;//计算距离
+  distanceF = distanceF+9;
+
+delay(100);   //循环间隔100uS
+ 
+  float distanceH ;
+  distanceH = sqrt(pow(distanceL,2)-pow(distanceF,2))+sqrt(pow(distanceR,2)-pow(distanceF,2));
+  Serial.print("distanceH : ");
+  Serial.print(distanceH);
+  Serial.println("cm");
+  delay(100);
+}
